@@ -249,7 +249,7 @@
     <input type="text" id="aluno2" placeholder="Digite o nome completo">
 
     <div class="info-list">
-      • 20 questões · 80 segundos cada<br>
+      • 20 questões · 60 segundos cada<br>
       • Valor total: 4,0 pontos<br>
       • Você pode trocar de alternativa livremente antes de avançar<br>
       • Depois de avançar, não é possível voltar à questão anterior<br>
@@ -263,7 +263,7 @@
   <div id="tela-quiz" class="hidden">
     <div class="quiz-header">
       <span class="q-count" id="q-count">Questão 1 de 20</span>
-      <span class="timer" id="timer">80s</span>
+      <span class="timer" id="timer">60s</span>
     </div>
     <div class="progress-outer"><div class="progress-inner" id="progress-inner"></div></div>
     <div class="question-text" id="question-text"></div>
@@ -290,7 +290,7 @@
 // Cole aqui a URL do Google Apps Script (Implantar > Nova implantação > App da Web)
 const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyGzD251XnwCzqjcCtHQ97jSmJdinfVWQN_pYGfDadSg3W2tbW8lkpNlcLnV_JuWskc/exec';
 
-const TEMPO_POR_QUESTAO = 80; // segundos
+const TEMPO_POR_QUESTAO = 60; // segundos
 const PONTOS_TOTAIS = 4.0;
 
 const perguntas = [
@@ -508,8 +508,8 @@ function enviarResultado(nota, acertos, erros){
     body: JSON.stringify(payload)
   }).then(() => {
     statusEl.textContent = 'Resultado registrado com sucesso.';
-  }).catch(() => {
-    statusEl.textContent = 'Não foi possível registrar o resultado automaticamente.';
+  }).catch((err) => {
+    statusEl.innerHTML = 'Não foi possível registrar o resultado automaticamente.<br><span style="word-break:break-all;">' + err.message + '</span>';
   });
 }
 </script>
