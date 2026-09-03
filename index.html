@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Anatomia Reprodutiva Feminina</title>
+<style>
+  :root{
+    --azul: #1d4ed8;
+    --azul-escuro: #1e3a8a;
+    --azul-claro: #dbeafe;
+    --branco: #ffffff;
+    --cinza: #64748b;
+    --cinza-claro: #f1f5f9;
+    --verde: #16a34a;
+    --vermelho: #dc2626;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background: linear-gradient(135deg, var(--azul-escuro), var(--azul));
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    color:#0f172a;
+  }
+  .card{
+    background:var(--branco);
+    border-radius:18px;
+    box-shadow:0 20px 50px rgba(0,0,0,0.25);
+    max-width:640px;
+    width:100%;
+    padding:32px 28px;
+  }
+  .badge{
+    display:inline-block;
+    background:var(--azul-claro);
+    color:var(--azul-escuro);
+    font-weight:700;
+    font-size:12px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    padding:4px 12px;
+    border-radius:999px;
+    margin-bottom:12px;
+  }
+  h1{
+    font-size:22px;
+    color:var(--azul-escuro);
+    margin-bottom:6px;
+    line-height:1.3;
+  }
+  .subt{
+    color:var(--cinza);
+    font-size:14px;
+    margin-bottom:24px;
+  }
+  label{
+    display:block;
+    font-size:13px;
+    font-weight:600;
+    color:var(--azul-escuro);
+    margin-bottom:6px;
+    margin-top:16px;
+  }
+  input[type="text"]{
+    width:100%;
+    padding:12px 14px;
+    border:2px solid var(--cinza-claro);
+    border-radius:10px;
+    font-size:15px;
+    outline:none;
+    transition:border-color .15s;
+  }
+  input[type="text"]:focus{border-color:var(--azul);}
+  .info-list{
+    margin-top:20px;
+    background:var(--cinza-claro);
+    border-radius:12px;
+    padding:14px 16px;
+    font-size:13px;
+    color:var(--cinza);
+    line-height:1.7;
+  }
+  button{
+    font-family:inherit;
+    cursor:pointer;
+    border:none;
+  }
+  .btn-primary{
+    width:100%;
+    margin-top:24px;
+    background:var(--azul);
+    color:var(--branco);
+    font-size:16px;
+    font-weight:700;
+    padding:14px;
+    border-radius:12px;
+    transition:background .15s, opacity .15s;
+  }
+  .btn-primary:hover:not(:disabled){background:var(--azul-escuro);}
+  .btn-primary:disabled{opacity:0.45;cursor:not-allowed;}
+  .hidden{display:none !important;}
+
+  /* Tela de questão */
+  .quiz-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:6px;
+  }
+  .q-count{
+    font-size:13px;
+    font-weight:700;
+    color:var(--azul-escuro);
+  }
+  .timer{
+    font-size:13px;
+    font-weight:700;
+    color:var(--vermelho);
+    min-width:52px;
+    text-align:right;
+  }
+  .progress-outer{
+    width:100%;
+    height:6px;
+    background:var(--cinza-claro);
+    border-radius:999px;
+    overflow:hidden;
+    margin-bottom:22px;
+  }
+  .progress-inner{
+    height:100%;
+    background:var(--azul);
+    width:100%;
+    transition:width 1s linear;
+  }
+  .question-text{
+    font-size:18px;
+    font-weight:700;
+    color:#0f172a;
+    margin-bottom:20px;
+    line-height:1.4;
+  }
+  .options{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .opt-btn{
+    text-align:left;
+    background:var(--branco);
+    border:2px solid var(--cinza-claro);
+    border-radius:12px;
+    padding:14px 16px;
+    font-size:15px;
+    color:#0f172a;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    transition:border-color .12s, background .12s;
+  }
+  .opt-letter{
+    width:26px;
+    height:26px;
+    flex-shrink:0;
+    border-radius:50%;
+    background:var(--cinza-claro);
+    color:var(--azul-escuro);
+    font-weight:700;
+    font-size:13px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .opt-btn:hover{border-color:var(--azul);}
+  .opt-btn.selected{
+    border-color:var(--azul);
+    background:var(--azul-claro);
+  }
+  .opt-btn.selected .opt-letter{
+    background:var(--azul);
+    color:var(--branco);
+  }
+  .opt-btn:disabled{cursor:default;opacity:0.85;}
+
+  /* Resultado */
+  .score-hero{
+    text-align:center;
+    padding:20px 0 8px;
+  }
+  .score-num{
+    font-size:44px;
+    font-weight:800;
+    color:var(--azul-escuro);
+  }
+  .score-sub{
+    font-size:14px;
+    color:var(--cinza);
+    margin-top:4px;
+  }
+  .gabarito{
+    margin-top:22px;
+    max-height:340px;
+    overflow-y:auto;
+    border-top:1px solid var(--cinza-claro);
+    padding-top:12px;
+  }
+  .gab-item{
+    padding:10px 0;
+    border-bottom:1px solid var(--cinza-claro);
+    font-size:13px;
+  }
+  .gab-item:last-child{border-bottom:none;}
+  .gab-q{
+    font-weight:700;
+    color:#0f172a;
+    margin-bottom:4px;
+  }
+  .gab-resp{
+    color:var(--cinza);
+  }
+  .gab-ok{color:var(--verde);font-weight:700;}
+  .gab-erro{color:var(--vermelho);font-weight:700;}
+  .save-status{
+    margin-top:16px;
+    font-size:12px;
+    color:var(--cinza);
+    text-align:center;
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+
+  <!-- TELA 1: IDENTIFICAÇÃO DA DUPLA -->
+  <div id="tela-inicio">
+    <div class="badge">Reprodução Animal</div>
+    <h1>Quiz — Anatomia Reprodutiva Feminina</h1>
+    <p class="subt">Prof. Mv Esp. José Alírio S. O. Júnior · Atividade em dupla</p>
+
+    <label for="aluno1">Nome do(a) aluno(a) 1</label>
+    <input type="text" id="aluno1" placeholder="Digite o nome completo">
+
+    <label for="aluno2">Nome do(a) aluno(a) 2</label>
+    <input type="text" id="aluno2" placeholder="Digite o nome completo">
+
+    <div class="info-list">
+      • 20 questões · 80 segundos cada<br>
+      • Valor total: 4,0 pontos<br>
+      • Você pode trocar de alternativa livremente antes de avançar<br>
+      • Depois de avançar, não é possível voltar à questão anterior<br>
+      • A pontuação só é revelada ao final do quiz
+    </div>
+
+    <button class="btn-primary" id="btn-iniciar" disabled>Iniciar Quiz</button>
+  </div>
+
+  <!-- TELA 2: QUESTÕES -->
+  <div id="tela-quiz" class="hidden">
+    <div class="quiz-header">
+      <span class="q-count" id="q-count">Questão 1 de 20</span>
+      <span class="timer" id="timer">80s</span>
+    </div>
+    <div class="progress-outer"><div class="progress-inner" id="progress-inner"></div></div>
+    <div class="question-text" id="question-text"></div>
+    <div class="options" id="options"></div>
+    <button class="btn-primary" id="btn-avancar" disabled>Avançar</button>
+  </div>
+
+  <!-- TELA 3: RESULTADO -->
+  <div id="tela-resultado" class="hidden">
+    <div class="badge">Resultado final</div>
+    <h1 id="resultado-nomes">Anatomia Reprodutiva Feminina</h1>
+    <div class="score-hero">
+      <div class="score-num" id="score-nota">0,0 / 4,0</div>
+      <div class="score-sub" id="score-detalhe">0 acertos · 0 erros</div>
+    </div>
+    <div class="gabarito" id="gabarito"></div>
+    <div class="save-status" id="save-status">Enviando resultado...</div>
+  </div>
+
+</div>
+
+<script>
+/* ======= CONFIGURAÇÃO ======= */
+// Cole aqui a URL do Google Apps Script (Implantar > Nova implantação > App da Web)
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyGzD251XnwCzqjcCtHQ97jSmJdinfVWQN_pYGfDadSg3W2tbW8lkpNlcLnV_JuWskc/exec';
+
+const TEMPO_POR_QUESTAO = 80; // segundos
+const PONTOS_TOTAIS = 4.0;
+
+const perguntas = [
+  { q: "Qual substância é responsável pela regressão do corpo lúteo?",
+    opts: ["PGF2 (prostaglandina F2α)", "Progesterona", "Estrógeno", "LH"], c: 0 },
+  { q: "Quais são as três porções do ligamento largo?",
+    opts: ["Mesovário, mesométrio e miométrio", "Mesovário, mesossalpinge e mesométrio", "Endométrio, miométrio e perimétrio", "Ístmo, ampola e infundíbulo"], c: 1 },
+  { q: "Quais são as funções da cérvice (cérvix)?",
+    opts: ["Produção de folículos", "Nutrição do embrião", "Separação útero-vaginal e proteção uterina", "Secreção de leite"], c: 2 },
+  { q: "Quais as duas funções principais dos ovários?",
+    opts: ["Digestiva e excretora", "Motora e sensitiva", "Filtração e secreção", "Exócrina e endócrina"], c: 3 },
+  { q: "Qual o formato dos ovários em equinos?",
+    opts: ["Formato de feijão", "Formato de amêndoa", "Formato de cacho de uva", "Formato esférico"], c: 0 },
+  { q: "Qual o formato dos ovários em ruminantes?",
+    opts: ["Formato de feijão", "Formato de amêndoa", "Formato de cacho de uva", "Formato oval"], c: 1 },
+  { q: "Qual o formato dos ovários em suínos?",
+    opts: ["Formato de amêndoa", "Formato de feijão", "Formato de cacho de uva", "Formato triangular"], c: 2 },
+  { q: "Quais estruturas são encontradas no córtex ovariano?",
+    opts: ["Apenas tecido conjuntivo fibroelástico", "Apenas vasos sanguíneos", "Apenas nervos", "Folículos, corpos hemorrágicos, corpos lúteos e albicans"], c: 3 },
+  { q: "O que caracteriza a medula ovariana?",
+    opts: ["Tecido conjuntivo fibroelástico", "Presença de folículos", "Presença de corpos lúteos", "Presença de oócitos"], c: 0 },
+  { q: "Quais são as partes do oviduto, do ovário ao útero?",
+    opts: ["Útero, corno, cérvice", "Infundíbulo, ampola e istmo", "Vestíbulo, vagina e cérvice", "Fímbria, cérvice e corno"], c: 1 },
+  { q: "Qual estrutura do oviduto capta o oócito liberado no ovário?",
+    opts: ["Istmo", "Ampola", "Fímbrias", "Cérvice"], c: 2 },
+  { q: "Que tipos celulares revestem a mucosa do oviduto?",
+    opts: ["Apenas células ciliadas", "Apenas células caliciformes", "Apenas células basais", "Células ciliadas e não-ciliadas"], c: 3 },
+  { q: "Quais são as três partes do útero?",
+    opts: ["Cornos, corpo e cérvice", "Fímbrias, ampola e istmo", "Vestíbulo, vagina e vulva", "Córtex, medula e hilo"], c: 0 },
+  { q: "Qual tipo uterino é encontrado na maioria dos animais domésticos?",
+    opts: ["Duplo", "Bicornual", "Simples", "Unicorno"], c: 1 },
+  { q: "Qual espécie apresenta útero do tipo duplo, com duas cérvices?",
+    opts: ["Bovinos", "Equinos", "Coelhos", "Suínos"], c: 2 },
+  { q: "O que ocorre com as glândulas endometriais durante o cio?",
+    opts: ["Ficam espiraladas", "Regridem completamente", "Desaparecem", "Ficam retas"], c: 3 },
+  { q: "Qual a função do muco cervical na inseminação artificial?",
+    opts: ["Selecionar e transportar espermatozoides", "Nutrir o embrião", "Produzir hormônios", "Formar o corpo lúteo"], c: 0 },
+  { q: "Quais são as funções da vagina?",
+    opts: ["Produção de hormônios", "Órgão copulador e canal do parto", "Filtração sanguínea", "Absorção de nutrientes"], c: 1 },
+  { q: "O que compõe a genitália externa feminina?",
+    opts: ["Apenas o clitóris", "Apenas os lábios maiores", "Vestíbulo, lábios e clitóris", "Apenas o óstio uretral"], c: 2 },
+  { q: "Qual estrutura da genitália externa está associada a terminações nervosas sensitivas?",
+    opts: ["Vestíbulo", "Lábios maiores", "Óstio uretral", "Clitóris"], c: 3 },
+];
+
+/* ======= ESTADO ======= */
+let alunoUm = "", alunoDois = "";
+let idxAtual = 0;
+let selecionada = null; // índice selecionado na questão atual
+let respostas = new Array(perguntas.length).fill(null); // índice escolhido por questão (null = não respondida)
+let timerInterval = null;
+let tempoRestante = TEMPO_POR_QUESTAO;
+
+const LETRAS = ["A", "B", "C", "D"];
+
+/* ======= TELA 1: INÍCIO ======= */
+const inputAluno1 = document.getElementById('aluno1');
+const inputAluno2 = document.getElementById('aluno2');
+const btnIniciar = document.getElementById('btn-iniciar');
+
+function validarNomes(){
+  const ok = inputAluno1.value.trim().length > 1 && inputAluno2.value.trim().length > 1;
+  btnIniciar.disabled = !ok;
+}
+inputAluno1.addEventListener('input', validarNomes);
+inputAluno2.addEventListener('input', validarNomes);
+
+btnIniciar.addEventListener('click', () => {
+  alunoUm = inputAluno1.value.trim();
+  alunoDois = inputAluno2.value.trim();
+  document.getElementById('tela-inicio').classList.add('hidden');
+  document.getElementById('tela-quiz').classList.remove('hidden');
+  renderQuestao();
+});
+
+/* ======= TELA 2: QUIZ ======= */
+const qCountEl = document.getElementById('q-count');
+const timerEl = document.getElementById('timer');
+const progressInner = document.getElementById('progress-inner');
+const questionTextEl = document.getElementById('question-text');
+const optionsEl = document.getElementById('options');
+const btnAvancar = document.getElementById('btn-avancar');
+
+function renderQuestao(){
+  selecionada = null;
+  tempoRestante = TEMPO_POR_QUESTAO;
+  btnAvancar.disabled = true;
+
+  const p = perguntas[idxAtual];
+  qCountEl.textContent = `Questão ${idxAtual + 1} de ${perguntas.length}`;
+  questionTextEl.textContent = p.q;
+  timerEl.textContent = tempoRestante + 's';
+  progressInner.style.transition = 'none';
+  progressInner.style.width = '100%';
+  void progressInner.offsetWidth;
+  progressInner.style.transition = 'width 1s linear';
+
+  optionsEl.innerHTML = '';
+  p.opts.forEach((texto, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.innerHTML = `<span class="opt-letter">${LETRAS[i]}</span><span>${texto}</span>`;
+    btn.addEventListener('click', () => selecionarOpcao(i));
+    optionsEl.appendChild(btn);
+  });
+
+  iniciarTimer();
+}
+
+function selecionarOpcao(i){
+  selecionada = i;
+  btnAvancar.disabled = false;
+  document.querySelectorAll('.opt-btn').forEach((btn, idx) => {
+    btn.classList.toggle('selected', idx === i);
+  });
+}
+
+function iniciarTimer(){
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    tempoRestante--;
+    timerEl.textContent = Math.max(tempoRestante, 0) + 's';
+    progressInner.style.width = (tempoRestante / TEMPO_POR_QUESTAO * 100) + '%';
+    if (tempoRestante <= 0){
+      clearInterval(timerInterval);
+      avancarQuestao();
+    }
+  }, 1000);
+}
+
+function avancarQuestao(){
+  clearInterval(timerInterval);
+  respostas[idxAtual] = selecionada; // null se o tempo esgotou sem resposta
+
+  // trava a questão (impede qualquer nova seleção nesta tela antes de trocar)
+  document.querySelectorAll('.opt-btn').forEach(btn => btn.disabled = true);
+
+  idxAtual++;
+  if (idxAtual < perguntas.length){
+    renderQuestao();
+  } else {
+    finalizarQuiz();
+  }
+}
+
+btnAvancar.addEventListener('click', avancarQuestao);
+
+/* ======= TELA 3: RESULTADO ======= */
+function finalizarQuiz(){
+  document.getElementById('tela-quiz').classList.add('hidden');
+  document.getElementById('tela-resultado').classList.remove('hidden');
+
+  let acertos = 0;
+  const gabarito = document.getElementById('gabarito');
+  gabarito.innerHTML = '';
+
+  perguntas.forEach((p, i) => {
+    const respostaAluno = respostas[i];
+    const correta = respostaAluno === p.c;
+    if (correta) acertos++;
+
+    const item = document.createElement('div');
+    item.className = 'gab-item';
+    const textoResposta = respostaAluno === null
+      ? 'Não respondida'
+      : `${LETRAS[respostaAluno]}) ${p.opts[respostaAluno]}`;
+    const textoCorreta = `${LETRAS[p.c]}) ${p.opts[p.c]}`;
+
+    item.innerHTML = `
+      <div class="gab-q">${i + 1}. ${p.q}</div>
+      <div class="gab-resp">Resposta da dupla: ${textoResposta} — <span class="${correta ? 'gab-ok' : 'gab-erro'}">${correta ? 'Certa' : 'Errada'}</span></div>
+      ${correta ? '' : `<div class="gab-resp">Resposta correta: ${textoCorreta}</div>`}
+    `;
+    gabarito.appendChild(item);
+  });
+
+  const erros = perguntas.length - acertos;
+  const nota = (acertos * (PONTOS_TOTAIS / perguntas.length));
+  const notaFormatada = nota.toFixed(1).replace('.', ',');
+
+  document.getElementById('resultado-nomes').textContent = `${alunoUm} & ${alunoDois}`;
+  document.getElementById('score-nota').textContent = `${notaFormatada} / ${PONTOS_TOTAIS.toFixed(1).replace('.', ',')}`;
+  document.getElementById('score-detalhe').textContent = `${acertos} acertos · ${erros} erros`;
+
+  enviarResultado(nota, acertos, erros);
+}
+
+function enviarResultado(nota, acertos, erros){
+  const statusEl = document.getElementById('save-status');
+
+  if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.indexOf('COLE_AQUI') !== -1){
+    statusEl.textContent = 'Integração com Google Sheets ainda não configurada.';
+    return;
+  }
+
+  const agora = new Date();
+  const data = agora.toLocaleDateString('pt-BR');
+  const hora = agora.toLocaleTimeString('pt-BR');
+
+  const payload = {
+    acao: 'registrar',
+    aluno1: alunoUm,
+    aluno2: alunoDois,
+    pontuacao: nota.toFixed(1),
+    acertos: acertos,
+    erros: erros,
+    data: data,
+    hora: hora
+  };
+
+  fetch(GOOGLE_SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify(payload)
+  }).then(() => {
+    statusEl.textContent = 'Resultado registrado com sucesso.';
+  }).catch(() => {
+    statusEl.textContent = 'Não foi possível registrar o resultado automaticamente.';
+  });
+}
+</script>
+</body>
+</html>
